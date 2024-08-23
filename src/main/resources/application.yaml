@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:33000/api
+    username: api_user
+    password: password123
+    driver-class-name: org.mariadb.jdbc.Driver
