@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,9 @@ public class LeaderboardService {
         Pageable pageable = PageRequest.of(0, 10);
 
         return leaderboardRepository.findTopOrderByScoreDesc(pageable);
+    }
+
+    public Optional<Leaderboard> findById(Long id) {
+        return leaderboardRepository.findById(id);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,15 +20,38 @@ public class LeaderboardController {
 
     @PostMapping("")
     public ResponseEntity<?> create(@RequestBody LeaderboardPostDto dto) {
-        Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
+        try {
+            Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
 
-        return new ResponseEntity<>(newRecord, HttpStatus.OK);
+            return new ResponseEntity<>(newRecord, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/top10")
     public ResponseEntity<?> top10() {
-        List<Leaderboard> data = leaderboardService.findTop10ByScore();
+        try {
+            List<Leaderboard> records = leaderboardService.findTop10ByScore();
 
-        return new ResponseEntity<>(data, HttpStatus.OK);
+            return new ResponseEntity<>(records, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+        try {
+            Optional<Leaderboard> record = leaderboardService.findById(id);
+
+            if (record.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(record.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
