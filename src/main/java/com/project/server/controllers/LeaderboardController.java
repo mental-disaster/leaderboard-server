@@ -1,13 +1,16 @@
 package com.project.server.controllers;
 
+import com.project.server.dtos.LeaderboardGetDto;
 import com.project.server.dtos.LeaderboardPostDto;
 import com.project.server.models.Leaderboard;
 import com.project.server.services.LeaderboardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,29 +22,35 @@ public class LeaderboardController {
     private final LeaderboardService leaderboardService;
 
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody LeaderboardPostDto dto) {
+    public ResponseEntity<Leaderboard> save(@Valid @RequestBody LeaderboardPostDto dto) {
         try {
             Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
 
-            return new ResponseEntity<>(newRecord, HttpStatus.OK);
+            return new ResponseEntity<>(
+                    newRecord,
+                    HttpStatus.OK);
+        } catch (InvalidParameterException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/top10")
-    public ResponseEntity<?> top10() {
+    public ResponseEntity<List<LeaderboardGetDto>> top10() {
         try {
             List<Leaderboard> records = leaderboardService.findTop10ByScore();
 
-            return new ResponseEntity<>(records, HttpStatus.OK);
+            return new ResponseEntity<>(
+                    records.stream().map((Leaderboard::toGetDto)).toList(),
+                    HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<LeaderboardGetDto> getById(@PathVariable("id") String id) {
         try {
             Optional<Leaderboard> record = leaderboardService.findById(id);
 
@@ -49,7 +58,9 @@ public class LeaderboardController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity<>(record.get(), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    record.get().toGetDto(),
+                    HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
