@@ -10,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,46 +21,28 @@ public class LeaderboardController {
 
     @PostMapping("")
     public ResponseEntity<Leaderboard> save(@Valid @RequestBody LeaderboardPostDto dto) {
-        try {
-            Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
+        Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
 
-            return new ResponseEntity<>(
-                    newRecord,
-                    HttpStatus.OK);
-        } catch (InvalidParameterException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(
+                newRecord,
+                HttpStatus.OK);
     }
 
     @GetMapping("/top10")
     public ResponseEntity<List<LeaderboardGetDto>> top10() {
-        try {
-            List<Leaderboard> records = leaderboardService.findTop10ByScore();
+        List<Leaderboard> records = leaderboardService.findTop10ByScore();
 
-            return new ResponseEntity<>(
-                    records.stream().map((Leaderboard::toGetDto)).toList(),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(
+                records.stream().map((Leaderboard::toGetDto)).toList(),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LeaderboardGetDto> getById(@PathVariable("id") String id) {
-        try {
-            Optional<Leaderboard> record = leaderboardService.findById(id);
+        Leaderboard record = leaderboardService.findById(id);
 
-            if (record.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
-            return new ResponseEntity<>(
-                    record.get().toGetDto(),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(
+                record.toGetDto(),
+                HttpStatus.OK);
     }
 }

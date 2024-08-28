@@ -3,6 +3,7 @@ package com.project.server.services;
 import com.project.server.dtos.LeaderboardPostDto;
 import com.project.server.models.Leaderboard;
 import com.project.server.repositories.LeaderboardRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,7 @@ public class LeaderboardService {
         if (dto.getId() != null) {
             id = dto.getId();
             if (leaderboardRepository.findById(id).isEmpty()) {
-                throw new InvalidParameterException();
+                throw new InvalidParameterException("잘못된 ID입니다.");
             }
         } else {
             do {
@@ -46,7 +47,14 @@ public class LeaderboardService {
         return leaderboardRepository.findByOrderByScoreDescCreatedAtAsc(pageable);
     }
 
-    public Optional<Leaderboard> findById(String id) {
-        return leaderboardRepository.findById(id);
+    public Leaderboard findById(String id) {
+        Optional<Leaderboard> result = leaderboardRepository.findById(id);
+
+
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("존재하지 않는 ID입니다.");
+        }
+
+        return result.get();
     }
 }
