@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -20,8 +19,6 @@ public class Leaderboard {
     private String id;
     private String name;
     private BigInteger score;
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
     public LeaderboardGetDto toGetDto() {

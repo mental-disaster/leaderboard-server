@@ -1,6 +1,6 @@
 package com.project.server.handlers;
 
-import com.project.server.constants.ErrorMessage;
+import com.project.server.enums.ErrorEnum;
 import com.project.server.dtos.ErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
                 .append("; "));
 
         ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode("4001")
+                .errorCode(ErrorEnum.INVALID_PARAMETER.getCode())
                 .message(message.toString())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -37,11 +37,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleInvalidParameterError(InvalidParameterException e) {
         String message = e.getMessage();
         if (message == null || message.isBlank()) {
-            message = ErrorMessage.INVALID_PARAMETER;
+            message = ErrorEnum.INVALID_PARAMETER.getMessage();
         }
 
         ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode("4002")
+                .errorCode(ErrorEnum.INVALID_PARAMETER.getCode())
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -53,11 +53,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleEntityNotFoundError(EntityNotFoundException e) {
         String message = e.getMessage();
         if (message == null || message.isBlank()) {
-            message = ErrorMessage.NOT_FOUND_DATA;
+            message = ErrorEnum.NOT_FOUND_DATA.getMessage();
         }
 
         ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode("4041")
+                .errorCode(ErrorEnum.NOT_FOUND_DATA.getCode())
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -68,8 +68,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleUnexpectedError(Exception e) {
         ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode("5000")
-                .message(ErrorMessage.UNEXPECTED)
+                .errorCode(ErrorEnum.UNEXPECTED.getCode())
+                .message(ErrorEnum.UNEXPECTED.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
 

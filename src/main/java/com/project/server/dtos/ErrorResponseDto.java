@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 @Builder
 public class ErrorResponseDto {
     private String message;
-    private String errorCode;
+    private int errorCode;
     private LocalDateTime timestamp;
 }

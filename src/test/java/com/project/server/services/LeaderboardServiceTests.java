@@ -1,6 +1,6 @@
 package com.project.server.services;
 
-import com.project.server.constants.ErrorMessage;
+import com.project.server.enums.ErrorEnum;
 import com.project.server.dtos.LeaderboardPostDto;
 import com.project.server.models.Leaderboard;
 import com.project.server.repositories.LeaderboardRepository;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class LeaderboardServiceTest {
+public class LeaderboardServiceTests {
 
     @Mock
     private LeaderboardRepository leaderboardRepository;
@@ -35,6 +35,10 @@ public class LeaderboardServiceTest {
     @Test
     void testSaveLeaderboard_success() {
         String existId = "b9c7fc7e-f2c2-4e39-85f1-123456789abc";
+        List<LeaderboardPostDto> testList = List.of(
+                LeaderboardPostDto.builder().id(null).name("new user").score(BigInteger.valueOf(1000)).build(),
+                LeaderboardPostDto.builder().id(existId).name("good record").score(BigInteger.valueOf(1500)).build()
+        );
 
         when(leaderboardRepository.findById(anyString())).thenAnswer(invocationOnMock -> {
             String uuid = invocationOnMock.getArgument(0);
@@ -54,11 +58,6 @@ public class LeaderboardServiceTest {
                 invocationOnMock.getArgument(0)
         );
 
-        List<LeaderboardPostDto> testList = List.of(
-                LeaderboardPostDto.builder().id(null).name("new user").score(BigInteger.valueOf(1000)).build(),
-                LeaderboardPostDto.builder().id(existId).name("good record").score(BigInteger.valueOf(1500)).build()
-        );
-
         for (LeaderboardPostDto leaderboard : testList) {
             Leaderboard result = leaderboardService.saveLeaderboard(leaderboard);
 
@@ -75,20 +74,19 @@ public class LeaderboardServiceTest {
     @Test
     void testSaveLeaderboard_fail_notExistId() {
         String notExistId = "f4b7f5c8-2b8e-4c2a-8b6c-7f5e7d7c1b3b";
-
-        when(leaderboardRepository.findById(notExistId)).thenReturn(
-                Optional.empty()
-        );
-
         LeaderboardPostDto notExistIdUser = LeaderboardPostDto.builder()
                 .id(notExistId)
                 .name("Unidentified id user")
                 .score(BigInteger.valueOf(1000))
                 .build();
 
+        when(leaderboardRepository.findById(notExistId)).thenReturn(
+                Optional.empty()
+        );
+
         InvalidParameterException thrown = Assertions.assertThrows(InvalidParameterException.class, () -> leaderboardService.saveLeaderboard(notExistIdUser));
 
-        Assertions.assertEquals(ErrorMessage.INVALID_ID, thrown.getMessage());
+        Assertions.assertEquals(ErrorEnum.INVALID_ID.getMessage(), thrown.getMessage());
     }
 
     @Test
@@ -108,7 +106,7 @@ public class LeaderboardServiceTest {
                 )
         );
 
-        List<Leaderboard> result = leaderboardService.findTop10ByScore();
+        List<Leaderboard> result = leaderboardService.findTop10();
 
         Assertions.assertEquals(10, result.size());
     }
@@ -134,6 +132,6 @@ public class LeaderboardServiceTest {
 
         EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> leaderboardService.findById("id"));
 
-        Assertions.assertEquals(ErrorMessage.NOT_FOUND_RECORD, thrown.getMessage());
+        Assertions.assertEquals(ErrorEnum.NOT_FOUND_LEADERBOARD.getMessage(), thrown.getMessage());
     }
 }

@@ -30,7 +30,7 @@ public class LeaderboardController {
 
     @GetMapping("/top10")
     public ResponseEntity<List<LeaderboardGetDto>> top10() {
-        List<Leaderboard> records = leaderboardService.findTop10ByScore();
+        List<Leaderboard> records = leaderboardService.findTop10();
 
         return new ResponseEntity<>(
                 records.stream().map((Leaderboard::toGetDto)).toList(),
@@ -38,7 +38,7 @@ public class LeaderboardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LeaderboardGetDto> getById(@PathVariable("id") String id) {
+    public ResponseEntity<LeaderboardGetDto> findById(@PathVariable("id") String id) {
         Leaderboard record = leaderboardService.findById(id);
 
         return new ResponseEntity<>(
