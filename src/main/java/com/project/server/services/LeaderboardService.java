@@ -1,5 +1,6 @@
 package com.project.server.services;
 
+import com.project.server.constants.ErrorMessage;
 import com.project.server.dtos.LeaderboardPostDto;
 import com.project.server.models.Leaderboard;
 import com.project.server.repositories.LeaderboardRepository;
@@ -29,7 +30,7 @@ public class LeaderboardService {
         if (dto.getId() != null) {
             id = dto.getId();
             if (leaderboardRepository.findById(id).isEmpty()) {
-                throw new InvalidParameterException("잘못된 ID입니다.");
+                throw new InvalidParameterException(ErrorMessage.INVALID_ID);
             }
         } else {
             do {
@@ -50,9 +51,8 @@ public class LeaderboardService {
     public Leaderboard findById(String id) {
         Optional<Leaderboard> result = leaderboardRepository.findById(id);
 
-
         if (result.isEmpty()) {
-            throw new EntityNotFoundException("존재하지 않는 ID입니다.");
+            throw new EntityNotFoundException(ErrorMessage.NOT_FOUND_RECORD);
         }
 
         return result.get();

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/leaderboard")
+@RequestMapping("/leaderboards")
 public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;

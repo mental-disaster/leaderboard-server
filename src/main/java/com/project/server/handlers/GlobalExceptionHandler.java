@@ -1,5 +1,6 @@
 package com.project.server.handlers;
 
+import com.project.server.constants.ErrorMessage;
 import com.project.server.dtos.ErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleInvalidParameterError(InvalidParameterException e) {
         String message = e.getMessage();
         if (message == null || message.isBlank()) {
-            message = "잘못된 요청 파라미터입니다.";
+            message = ErrorMessage.INVALID_PARAMETER;
         }
 
         ErrorResponseDto errRes = ErrorResponseDto.builder()
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleEntityNotFoundError(EntityNotFoundException e) {
         String message = e.getMessage();
         if (message == null || message.isBlank()) {
-            message = "데이터가 존재하지 않습니다.";
+            message = ErrorMessage.NOT_FOUND_DATA;
         }
 
         ErrorResponseDto errRes = ErrorResponseDto.builder()
@@ -68,7 +69,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleUnexpectedError(Exception e) {
         ErrorResponseDto errRes = ErrorResponseDto.builder()
                 .errorCode("5000")
-                .message("예상하지 못한 오류가 발생했습니다. 잠시후 다시 시도해주세요")
+                .message(ErrorMessage.UNEXPECTED)
                 .timestamp(LocalDateTime.now())
                 .build();
 
