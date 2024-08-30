@@ -26,7 +26,7 @@ public class LeaderboardService {
         Leaderboard newRecord = new Leaderboard();
         newRecord.setName(dto.getName());
         newRecord.setScore(dto.getScore());
-        newRecord.setCreatedAt(LocalDateTime.now());
+        newRecord.setRecordedAt(LocalDateTime.now());
 
         String id;
         if (dto.getId() != null && !dto.getId().isBlank()) {
@@ -47,7 +47,7 @@ public class LeaderboardService {
     public List<Leaderboard> findTop10() {
         Pageable pageable = PageRequest.of(0, 10);
 
-        return leaderboardRepository.findByOrderByScoreDescCreatedAtAsc(pageable);
+        return leaderboardRepository.findByOrderByScoreDescRecordedAtAsc(pageable);
     }
 
     public Leaderboard findById(String id) {

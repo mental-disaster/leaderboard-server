@@ -19,13 +19,13 @@ public class Leaderboard {
     private String id;
     private String name;
     private BigInteger score;
-    private LocalDateTime createdAt;
+    private LocalDateTime recordedAt;
 
     public LeaderboardGetDto toGetDto() {
         return LeaderboardGetDto.builder()
                 .name(this.name)
                 .score(this.score)
-                .createdAt(this.createdAt)
+                .recordedAt(this.recordedAt)
                 .build();
     }
 }

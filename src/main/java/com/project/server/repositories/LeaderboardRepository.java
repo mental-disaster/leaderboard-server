@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface LeaderboardRepository extends JpaRepository<Leaderboard, String> {
 
-    List<Leaderboard> findByOrderByScoreDescCreatedAtAsc(Pageable pageable);
+    List<Leaderboard> findByOrderByScoreDescRecordedAtAsc(Pageable pageable);
 }

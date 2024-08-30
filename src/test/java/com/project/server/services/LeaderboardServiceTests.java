@@ -48,7 +48,7 @@ public class LeaderboardServiceTests {
                                 .setId(uuid)
                                 .setName("user1")
                                 .setScore(BigInteger.valueOf(1000))
-                                .setCreatedAt(LocalDateTime.now())
+                                .setRecordedAt(LocalDateTime.now())
                 );
             } else {
                 return Optional.empty();
@@ -91,7 +91,7 @@ public class LeaderboardServiceTests {
 
     @Test
     void testFindTop10ByScore() {
-        when(leaderboardRepository.findByOrderByScoreDescCreatedAtAsc(PageRequest.of(0, 10))).thenReturn(
+        when(leaderboardRepository.findByOrderByScoreDescRecordedAtAsc(PageRequest.of(0, 10))).thenReturn(
                 List.of(
                         new Leaderboard().setId("1").setName("user1").setScore(BigInteger.valueOf(1)),
                         new Leaderboard().setId("2").setName("user2").setScore(BigInteger.valueOf(2)),

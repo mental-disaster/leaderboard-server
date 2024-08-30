@@ -11,5 +11,5 @@ import java.time.LocalDateTime;
 public class LeaderboardGetDto {
     private String name;
     private BigInteger score;
-    private LocalDateTime createdAt;
+    private LocalDateTime recordedAt;
 }
