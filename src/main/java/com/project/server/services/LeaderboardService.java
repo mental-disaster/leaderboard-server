@@ -20,4 +20,8 @@ public class LeaderboardService {
 
         return recordRepository.findByOrderByScoreDescRecordedAtAsc(pageable);
     }
+
+    public List<LeaderboardRecord> findAllByGroupId(String groupId) {
+        return recordRepository.findAllByGroupId(groupId);
+    }
 }

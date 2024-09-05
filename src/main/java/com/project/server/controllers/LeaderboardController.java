@@ -25,4 +25,13 @@ public class LeaderboardController {
                 records.stream().map((LeaderboardRecord::toGetDto)).toList(),
                 HttpStatus.OK);
     }
+
+    @GetMapping("/groups/{id}")
+    public ResponseEntity<List<RecordGetDto>> findAllByGroupId(@PathVariable("id") String groupId) {
+        List<LeaderboardRecord> records = leaderboardService.findAllByGroupId(groupId);
+
+        return new ResponseEntity<>(
+                records.stream().map((LeaderboardRecord::toGetDto)).toList(),
+                HttpStatus.OK);
+    }
 }

@@ -1,0 +1,1 @@
+alter table leaderboard_record add column group_code varchar(7);

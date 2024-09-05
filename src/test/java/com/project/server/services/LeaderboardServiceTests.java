@@ -45,4 +45,19 @@ public class LeaderboardServiceTests {
 
         Assertions.assertEquals(10, result.size());
     }
+
+    @Test
+    void testFindAllByGroupId() {
+        when(recordRepository.findAllByGroupId("123")).thenReturn(
+                List.of(
+                        new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)).setGroupId("123"),
+                        new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)).setGroupId("123"),
+                        new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)).setGroupId("123")
+                )
+        );
+
+        List<LeaderboardRecord> result = leaderboardService.findAllByGroupId("123");
+
+        Assertions.assertEquals(3, result.size());
+    }
 }

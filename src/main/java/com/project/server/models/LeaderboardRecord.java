@@ -19,6 +19,7 @@ public class LeaderboardRecord {
     private String id;
     private String name;
     private BigInteger score;
+    private String groupId;
     private LocalDateTime recordedAt;
 
     public RecordGetDto toGetDto() {

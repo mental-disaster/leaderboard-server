@@ -9,4 +9,6 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<LeaderboardRecord, String> {
 
     List<LeaderboardRecord> findByOrderByScoreDescRecordedAtAsc(Pageable pageable);
+
+    List<LeaderboardRecord> findAllByGroupId(String groupId);
 }

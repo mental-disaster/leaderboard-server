@@ -46,4 +46,19 @@ public class LeaderboardControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(10));
     }
+
+    @Test
+    public void testFindAllByGroupId() throws Exception {
+        when(leaderboardService.findAllByGroupId("123")).thenReturn(
+                List.of(
+                        new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)).setGroupId("123"),
+                        new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)).setGroupId("123"),
+                        new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)).setGroupId("123")
+                )
+        );
+
+        mockMvc.perform(get("/leaderboards/groups/123"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3));
+    }
 }

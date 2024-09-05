@@ -25,7 +25,7 @@ public class RecordRepositoryTests {
     }
 
     @Test
-    public void findByOrderByScoreDescCreatedAtAsc() {
+    public void testFindByOrderByScoreDescCreatedAtAsc() {
         List<LeaderboardRecord> baseDate = List.of(
                 new LeaderboardRecord().setId("1").setName("11").setScore(BigInteger.valueOf(1003)).setRecordedAt(LocalDateTime.of(2024, 1, 1, 0, 0, 0)),
                 new LeaderboardRecord().setId("2").setName("12").setScore(BigInteger.valueOf(1002)).setRecordedAt(LocalDateTime.of(2024, 1, 1, 0, 0, 0)),
@@ -54,6 +54,26 @@ public class RecordRepositoryTests {
         for (int i = 0; i < records.size(); i++) {
             LeaderboardRecord leaderboardRecord = records.get(i);
             Assertions.assertEquals(i+1, Integer.valueOf(leaderboardRecord.getName()));
+        }
+    }
+
+    @Test
+    public void testFindByAllByGroupId() {
+        List<LeaderboardRecord> baseDate = List.of(
+                new LeaderboardRecord().setId("1").setName("11").setGroupId("123"),
+                new LeaderboardRecord().setId("2").setName("12").setGroupId("123"),
+                new LeaderboardRecord().setId("3").setName("13"),
+                new LeaderboardRecord().setId("4").setName("8")
+        );
+
+        recordRepository.saveAll(baseDate);
+
+        List<LeaderboardRecord> records = recordRepository.findAllByGroupId("123");
+
+        Assertions.assertEquals(2, records.size());
+
+        for (LeaderboardRecord record : records) {
+            Assertions.assertEquals("123", record.getGroupId());
         }
     }
 }
