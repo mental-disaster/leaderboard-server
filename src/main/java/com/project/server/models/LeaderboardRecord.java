@@ -1,6 +1,6 @@
 package com.project.server.models;
 
-import com.project.server.dtos.LeaderboardGetDto;
+import com.project.server.dtos.RecordGetDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Accessors(chain = true)
-public class Leaderboard {
+public class LeaderboardRecord {
 
     @Id
     private String id;
@@ -21,8 +21,8 @@ public class Leaderboard {
     private BigInteger score;
     private LocalDateTime recordedAt;
 
-    public LeaderboardGetDto toGetDto() {
-        return LeaderboardGetDto.builder()
+    public RecordGetDto toGetDto() {
+        return RecordGetDto.builder()
                 .name(this.name)
                 .score(this.score)
                 .recordedAt(this.recordedAt)

@@ -1,10 +1,8 @@
 package com.project.server.controllers;
 
-import com.project.server.dtos.LeaderboardGetDto;
-import com.project.server.dtos.LeaderboardPostDto;
-import com.project.server.models.Leaderboard;
+import com.project.server.dtos.RecordGetDto;
+import com.project.server.models.LeaderboardRecord;
 import com.project.server.services.LeaderboardService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +17,12 @@ public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;
 
-    @PostMapping("")
-    public ResponseEntity<Leaderboard> save(@Valid @RequestBody LeaderboardPostDto dto) {
-        Leaderboard newRecord = leaderboardService.saveLeaderboard(dto);
-
-        return new ResponseEntity<>(
-                newRecord,
-                HttpStatus.OK);
-    }
-
     @GetMapping("/top10")
-    public ResponseEntity<List<LeaderboardGetDto>> top10() {
-        List<Leaderboard> records = leaderboardService.findTop10();
+    public ResponseEntity<List<RecordGetDto>> top10() {
+        List<LeaderboardRecord> records = leaderboardService.findTop10();
 
         return new ResponseEntity<>(
-                records.stream().map((Leaderboard::toGetDto)).toList(),
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<LeaderboardGetDto> findById(@PathVariable("id") String id) {
-        Leaderboard record = leaderboardService.findById(id);
-
-        return new ResponseEntity<>(
-                record.toGetDto(),
+                records.stream().map((LeaderboardRecord::toGetDto)).toList(),
                 HttpStatus.OK);
     }
 }

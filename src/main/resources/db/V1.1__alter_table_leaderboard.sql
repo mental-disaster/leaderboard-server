@@ -1,0 +1,1 @@
+rename table leaderboard to leaderboard_record;

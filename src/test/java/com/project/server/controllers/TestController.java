@@ -1,6 +1,6 @@
 package com.project.server.controllers;
 
-import com.project.server.dtos.LeaderboardPostDto;
+import com.project.server.dtos.RecordPostDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.security.InvalidParameterException;
 public class TestController {
 
     @GetMapping("/invalid-error")
-    public void invalidError(@Valid @RequestBody LeaderboardPostDto doNothing) {
+    public void invalidError(@Valid @RequestBody RecordPostDto doNothing) {
     }
 
     @GetMapping("/invalid-parameter-error")

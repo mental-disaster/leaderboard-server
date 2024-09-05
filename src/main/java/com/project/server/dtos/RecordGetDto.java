@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class LeaderboardGetDto {
+public class RecordGetDto {
     private String name;
     private BigInteger score;
     private LocalDateTime recordedAt;
