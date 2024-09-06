@@ -26,6 +26,7 @@ public class LeaderboardRecord {
         return RecordGetDto.builder()
                 .name(this.name)
                 .score(this.score)
+                .groupId(this.groupId)
                 .recordedAt(this.recordedAt)
                 .build();
     }

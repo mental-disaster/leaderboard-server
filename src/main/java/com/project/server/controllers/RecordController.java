@@ -6,7 +6,6 @@ import com.project.server.models.LeaderboardRecord;
 import com.project.server.services.RecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +16,31 @@ public class RecordController {
 
     private final RecordService recordService;
 
+    /**
+     * 기록 생성 또는 갱신
+     * @param dto 기록 저장 요청 dto
+     * @return 저장된 기록값(생성시 기록 id 포함)
+     */
     @PostMapping("")
     public ResponseEntity<LeaderboardRecord> save(@Valid @RequestBody RecordPostDto dto) {
         LeaderboardRecord newRecord = recordService.saveLeaderboard(dto);
 
-        return new ResponseEntity<>(
-                newRecord,
-                HttpStatus.OK);
+        return ResponseEntity.ok(
+                newRecord
+        );
     }
 
+    /**
+     * id 기반 기록 확인
+     * @param id 기록 id
+     * @return 요청 기록
+     */
     @GetMapping("/{id}")
     public ResponseEntity<RecordGetDto> findById(@PathVariable("id") String id) {
         LeaderboardRecord record = recordService.findById(id);
 
-        return new ResponseEntity<>(
-                record.toGetDto(),
-                HttpStatus.OK);
+        return ResponseEntity.ok(
+                record.toGetDto()
+        );
     }
 }

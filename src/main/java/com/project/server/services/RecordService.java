@@ -32,8 +32,15 @@ public class RecordService {
                 throw new InvalidParameterException(ErrorEnum.INVALID_ID.getMessage());
             }
         } else {
+            int generateCount = 0;
+            int generateLimit = 10;
+
             do {
                 id = UUID.randomUUID().toString();
+                generateCount++;
+                if (generateCount > generateLimit) {
+                    throw new IllegalStateException(ErrorEnum.GENERATE_FAIL.getMessage());
+                }
             } while (recordRepository.findById(id).isPresent());
         }
         newRecord.setId(id);
@@ -45,7 +52,7 @@ public class RecordService {
         Optional<LeaderboardRecord> result = recordRepository.findById(id);
 
         if (result.isEmpty()) {
-            throw new EntityNotFoundException(ErrorEnum.NOT_FOUND_LEADERBOARD.getMessage());
+            throw new EntityNotFoundException(ErrorEnum.NOT_FOUND_RECORD.getMessage());
         }
 
         return result.get();

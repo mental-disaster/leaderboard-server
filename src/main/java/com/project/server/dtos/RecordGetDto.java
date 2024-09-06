@@ -11,5 +11,6 @@ import java.time.LocalDateTime;
 public class RecordGetDto {
     private String name;
     private BigInteger score;
+    private String groupId;
     private LocalDateTime recordedAt;
 }

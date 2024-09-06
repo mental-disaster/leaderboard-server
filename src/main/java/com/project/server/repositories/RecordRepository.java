@@ -11,4 +11,6 @@ public interface RecordRepository extends JpaRepository<LeaderboardRecord, Strin
     List<LeaderboardRecord> findByOrderByScoreDescRecordedAtAsc(Pageable pageable);
 
     List<LeaderboardRecord> findAllByGroupId(String groupId);
+
+    boolean existsByGroupId(String groupId);
 }

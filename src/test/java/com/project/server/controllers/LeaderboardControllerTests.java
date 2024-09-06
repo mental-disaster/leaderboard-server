@@ -1,18 +1,24 @@
 package com.project.server.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.server.dtos.GroupPostDto;
 import com.project.server.models.LeaderboardRecord;
 import com.project.server.services.LeaderboardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +27,9 @@ public class LeaderboardControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private LeaderboardService leaderboardService;
@@ -45,6 +54,23 @@ public class LeaderboardControllerTests {
         mockMvc.perform(get("/leaderboards/top10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(10));
+    }
+
+    @Test
+    public void testJoinGroup() throws Exception {
+        GroupPostDto bodyParam = GroupPostDto.builder().id("1").groupId("qwer123").build();
+
+        when(leaderboardService.joinGroup(any(GroupPostDto.class))).thenReturn(
+                new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.ONE).setGroupId("abc1234").setRecordedAt(LocalDateTime.now())
+        );
+
+        String bodyJson = objectMapper.writeValueAsString(bodyParam);
+
+        mockMvc.perform(post("/leaderboards/groups")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test

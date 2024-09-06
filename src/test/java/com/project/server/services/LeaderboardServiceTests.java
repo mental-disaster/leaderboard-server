@@ -1,5 +1,7 @@
 package com.project.server.services;
 
+import com.project.server.dtos.GroupPostDto;
+import com.project.server.enums.ErrorEnum;
 import com.project.server.models.LeaderboardRecord;
 import com.project.server.repositories.RecordRepository;
 import org.junit.jupiter.api.Assertions;
@@ -11,8 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
 import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +50,78 @@ public class LeaderboardServiceTests {
         List<LeaderboardRecord> result = leaderboardService.findTop10();
 
         Assertions.assertEquals(10, result.size());
+    }
+
+    @Test
+    void testJoinGroup_success() {
+        List<GroupPostDto> testList = List.of(
+                GroupPostDto.builder().id("1").build(),
+                GroupPostDto.builder().id("2").groupId("qwer123").build()
+        );
+
+        when(recordRepository.findById("1")).thenReturn(
+                Optional.of(
+                        new LeaderboardRecord().setId("1")
+                )
+        );
+        when(recordRepository.findById("2")).thenReturn(
+                Optional.of(
+                        new LeaderboardRecord()
+                                .setId("2")
+                                .setGroupId("abc1234")
+                )
+        );
+        when(recordRepository.existsByGroupId(anyString())).thenAnswer(invocationOnMock -> {
+            String groupId = invocationOnMock.getArgument(0);
+            if (groupId.equals("qwer123")) {
+                return true;
+            }
+            return false;
+        });
+        when(recordRepository.save(any(LeaderboardRecord.class))).thenAnswer(invocationOnMock ->
+                invocationOnMock.getArgument(0)
+        );
+
+        LeaderboardRecord test1 = leaderboardService.joinGroup(testList.get(0));
+        Assertions.assertNotNull(test1.getGroupId());
+
+        LeaderboardRecord test2 = leaderboardService.joinGroup(testList.get(1));
+        Assertions.assertEquals("qwer123", test2.getGroupId());
+    }
+
+    @Test
+    void testJoinGroup_fail() {
+        List<GroupPostDto> testList = List.of(
+                GroupPostDto.builder().id("1").build(),
+                GroupPostDto.builder().id("2").groupId("qwer123").build(),
+                GroupPostDto.builder().id("3").build()
+        );
+
+        when(recordRepository.findById(anyString())).thenAnswer(invocationOnMock -> {
+            String id = invocationOnMock.getArgument(0);
+            if (id.equals("1")) {
+                return Optional.empty();
+            }
+            return Optional.of(
+                    new LeaderboardRecord().setId("2")
+            );
+        });
+        when(recordRepository.existsByGroupId(anyString())).thenAnswer(invocationOnMock -> {
+            String groupId = invocationOnMock.getArgument(0);
+            if (groupId.equals("qwer123")) {
+                return false;
+            }
+            return true;
+        });
+
+        InvalidParameterException invalidId = Assertions.assertThrows(InvalidParameterException.class, () -> leaderboardService.joinGroup(testList.get(0)));
+        Assertions.assertEquals(ErrorEnum.INVALID_ID.getMessage(), invalidId.getMessage());
+
+        InvalidParameterException invalidGroupId = Assertions.assertThrows(InvalidParameterException.class, () -> leaderboardService.joinGroup(testList.get(1)));
+        Assertions.assertEquals(ErrorEnum.INVALID_PARAMETER.getMessage(), invalidGroupId.getMessage());
+
+        IllegalStateException generateFail = Assertions.assertThrows(IllegalStateException.class, () -> leaderboardService.joinGroup(testList.get(2)));
+        Assertions.assertEquals(ErrorEnum.GENERATE_FAIL.getMessage(), generateFail.getMessage());
     }
 
     @Test

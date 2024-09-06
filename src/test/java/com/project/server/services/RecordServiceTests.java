@@ -36,6 +36,7 @@ public class RecordServiceTests {
         String existId = "b9c7fc7e-f2c2-4e39-85f1-123456789abc";
         List<RecordPostDto> testList = List.of(
                 RecordPostDto.builder().id(null).name("new user").score(BigInteger.valueOf(1000)).build(),
+                RecordPostDto.builder().id("").name("new user2").score(BigInteger.valueOf(100)).build(),
                 RecordPostDto.builder().id(existId).name("good record").score(BigInteger.valueOf(1500)).build()
         );
 
@@ -71,21 +72,33 @@ public class RecordServiceTests {
     }
 
     @Test
-    void testSaveLeaderboard_fail_notExistId() {
+    void testSaveLeaderboard_fail() {
         String notExistId = "f4b7f5c8-2b8e-4c2a-8b6c-7f5e7d7c1b3b";
         RecordPostDto notExistIdUser = RecordPostDto.builder()
                 .id(notExistId)
                 .name("Unidentified id user")
                 .score(BigInteger.valueOf(1000))
                 .build();
+        RecordPostDto newUser = RecordPostDto.builder()
+                .id(null)
+                .name("new user")
+                .score(BigInteger.valueOf(1000))
+                .build();
 
-        when(recordRepository.findById(notExistId)).thenReturn(
-                Optional.empty()
-        );
+        when(recordRepository.findById(anyString())).thenAnswer(invocationOnMock -> {
+            String uuid = invocationOnMock.getArgument(0);
+            if (notExistId.equals(uuid)) {
+                return Optional.empty();
+            } else {
+                return Optional.of(new LeaderboardRecord());
+            }
+        });
 
-        InvalidParameterException thrown = Assertions.assertThrows(InvalidParameterException.class, () -> recordService.saveLeaderboard(notExistIdUser));
+        InvalidParameterException invalidId = Assertions.assertThrows(InvalidParameterException.class, () -> recordService.saveLeaderboard(notExistIdUser));
+        Assertions.assertEquals(ErrorEnum.INVALID_ID.getMessage(), invalidId.getMessage());
 
-        Assertions.assertEquals(ErrorEnum.INVALID_ID.getMessage(), thrown.getMessage());
+        IllegalStateException generateFail = Assertions.assertThrows(IllegalStateException.class, () -> recordService.saveLeaderboard(newUser));
+        Assertions.assertEquals(ErrorEnum.GENERATE_FAIL.getMessage(), generateFail.getMessage());
     }
 
     @Test
@@ -102,13 +115,13 @@ public class RecordServiceTests {
     }
 
     @Test
-    void testFindById_fail_notFound() {
+    void testFindById_fail() {
         when(recordRepository.findById(anyString())).thenReturn(
                 Optional.empty()
         );
 
-        EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> recordService.findById("id"));
+        EntityNotFoundException notFound = Assertions.assertThrows(EntityNotFoundException.class, () -> recordService.findById("id"));
 
-        Assertions.assertEquals(ErrorEnum.NOT_FOUND_LEADERBOARD.getMessage(), thrown.getMessage());
+        Assertions.assertEquals(ErrorEnum.NOT_FOUND_RECORD.getMessage(), notFound.getMessage());
     }
 }

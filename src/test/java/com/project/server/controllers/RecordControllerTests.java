@@ -61,7 +61,7 @@ public class RecordControllerTests {
     }
 
     @Test
-    public void testSave_fail_invalidParam() throws Exception {
+    public void testSave_fail() throws Exception {
         String bodyJson = objectMapper.writeValueAsString(
                 RecordPostDto.builder().id("invalid param").name("has id user").score(BigInteger.ONE).build()
         );
