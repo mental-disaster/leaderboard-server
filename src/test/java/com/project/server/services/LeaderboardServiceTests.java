@@ -32,20 +32,21 @@ public class LeaderboardServiceTests {
 
     @Test
     void testFindTop10ByScore() {
-        when(recordRepository.findByOrderByScoreDescRecordedAtAsc(PageRequest.of(0, 10))).thenReturn(
-                List.of(
-                        new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)),
-                        new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)),
-                        new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)),
-                        new LeaderboardRecord().setId("4").setName("user4").setScore(BigInteger.valueOf(4)),
-                        new LeaderboardRecord().setId("5").setName("user5").setScore(BigInteger.valueOf(5)),
-                        new LeaderboardRecord().setId("6").setName("user6").setScore(BigInteger.valueOf(6)),
-                        new LeaderboardRecord().setId("7").setName("user7").setScore(BigInteger.valueOf(7)),
-                        new LeaderboardRecord().setId("8").setName("user8").setScore(BigInteger.valueOf(8)),
-                        new LeaderboardRecord().setId("9").setName("user9").setScore(BigInteger.valueOf(9)),
-                        new LeaderboardRecord().setId("10").setName("user10").setScore(BigInteger.valueOf(10))
-                )
-        );
+        when(recordRepository.findByOrderByScoreDescRecordedAtAsc(PageRequest.of(0, 10)))
+                .thenReturn(
+                        List.of(
+                                new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)),
+                                new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)),
+                                new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)),
+                                new LeaderboardRecord().setId("4").setName("user4").setScore(BigInteger.valueOf(4)),
+                                new LeaderboardRecord().setId("5").setName("user5").setScore(BigInteger.valueOf(5)),
+                                new LeaderboardRecord().setId("6").setName("user6").setScore(BigInteger.valueOf(6)),
+                                new LeaderboardRecord().setId("7").setName("user7").setScore(BigInteger.valueOf(7)),
+                                new LeaderboardRecord().setId("8").setName("user8").setScore(BigInteger.valueOf(8)),
+                                new LeaderboardRecord().setId("9").setName("user9").setScore(BigInteger.valueOf(9)),
+                                new LeaderboardRecord().setId("10").setName("user10").setScore(BigInteger.valueOf(10))
+                        )
+                );
 
         List<LeaderboardRecord> result = leaderboardService.findTop10();
 
@@ -59,28 +60,30 @@ public class LeaderboardServiceTests {
                 GroupPostDto.builder().id("2").groupId("qwer123").build()
         );
 
-        when(recordRepository.findById("1")).thenReturn(
-                Optional.of(
-                        new LeaderboardRecord().setId("1")
-                )
-        );
-        when(recordRepository.findById("2")).thenReturn(
-                Optional.of(
-                        new LeaderboardRecord()
-                                .setId("2")
-                                .setGroupId("abc1234")
-                )
-        );
-        when(recordRepository.existsByGroupId(anyString())).thenAnswer(invocationOnMock -> {
-            String groupId = invocationOnMock.getArgument(0);
-            if (groupId.equals("qwer123")) {
-                return true;
-            }
-            return false;
-        });
-        when(recordRepository.save(any(LeaderboardRecord.class))).thenAnswer(invocationOnMock ->
-                invocationOnMock.getArgument(0)
-        );
+        when(recordRepository.findById("1"))
+                .thenReturn(
+                        Optional.of(
+                                new LeaderboardRecord().setId("1")
+                        )
+                );
+        when(recordRepository.findById("2"))
+                .thenReturn(
+                        Optional.of(
+                                new LeaderboardRecord()
+                                        .setId("2")
+                                        .setGroupId("abc1234")
+                        )
+                );
+        when(recordRepository.existsByGroupId(anyString()))
+                .thenAnswer(invocationOnMock -> {
+                    String groupId = invocationOnMock.getArgument(0);
+                    if (groupId.equals("qwer123")) {
+                        return true;
+                    }
+                    return false;
+                });
+        when(recordRepository.save(any(LeaderboardRecord.class)))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         LeaderboardRecord test1 = leaderboardService.joinGroup(testList.get(0));
         Assertions.assertNotNull(test1.getGroupId());
@@ -97,22 +100,24 @@ public class LeaderboardServiceTests {
                 GroupPostDto.builder().id("3").build()
         );
 
-        when(recordRepository.findById(anyString())).thenAnswer(invocationOnMock -> {
-            String id = invocationOnMock.getArgument(0);
-            if (id.equals("1")) {
-                return Optional.empty();
-            }
-            return Optional.of(
-                    new LeaderboardRecord().setId("2")
-            );
-        });
-        when(recordRepository.existsByGroupId(anyString())).thenAnswer(invocationOnMock -> {
-            String groupId = invocationOnMock.getArgument(0);
-            if (groupId.equals("qwer123")) {
-                return false;
-            }
-            return true;
-        });
+        when(recordRepository.findById(anyString()))
+                .thenAnswer(invocationOnMock -> {
+                    String id = invocationOnMock.getArgument(0);
+                    if (id.equals("1")) {
+                        return Optional.empty();
+                    }
+                    return Optional.of(
+                            new LeaderboardRecord().setId("2")
+                    );
+                });
+        when(recordRepository.existsByGroupId(anyString()))
+                .thenAnswer(invocationOnMock -> {
+                    String groupId = invocationOnMock.getArgument(0);
+                    if (groupId.equals("qwer123")) {
+                        return false;
+                    }
+                    return true;
+                });
 
         InvalidParameterException invalidId = Assertions.assertThrows(InvalidParameterException.class, () -> leaderboardService.joinGroup(testList.get(0)));
         Assertions.assertEquals(ErrorEnum.INVALID_ID.getMessage(), invalidId.getMessage());
@@ -126,13 +131,14 @@ public class LeaderboardServiceTests {
 
     @Test
     void testFindAllByGroupId() {
-        when(recordRepository.findAllByGroupId("123")).thenReturn(
-                List.of(
-                        new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)).setGroupId("123"),
-                        new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)).setGroupId("123"),
-                        new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)).setGroupId("123")
-                )
-        );
+        when(recordRepository.findAllByGroupId("123"))
+                .thenReturn(
+                        List.of(
+                                new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.valueOf(1)).setGroupId("123"),
+                                new LeaderboardRecord().setId("2").setName("user2").setScore(BigInteger.valueOf(2)).setGroupId("123"),
+                                new LeaderboardRecord().setId("3").setName("user3").setScore(BigInteger.valueOf(3)).setGroupId("123")
+                        )
+                );
 
         List<LeaderboardRecord> result = leaderboardService.findAllByGroupId("123");
 

@@ -23,7 +23,7 @@ public class RecordController {
      */
     @PostMapping("")
     public ResponseEntity<LeaderboardRecord> save(@Valid @RequestBody RecordPostDto dto) {
-        LeaderboardRecord newRecord = recordService.saveLeaderboard(dto);
+        LeaderboardRecord newRecord = recordService.saveRecord(dto);
 
         return ResponseEntity.ok(
                 newRecord

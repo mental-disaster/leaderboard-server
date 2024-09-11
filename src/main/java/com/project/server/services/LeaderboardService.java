@@ -6,6 +6,8 @@ import com.project.server.models.LeaderboardRecord;
 import com.project.server.repositories.RecordRepository;
 import com.project.server.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ public class LeaderboardService {
 
     final RecordRepository recordRepository;
 
+    @Cacheable(cacheNames = "leaderboardCache", key = "'top10'")
     public List<LeaderboardRecord> findTop10() {
         Pageable pageable = PageRequest.of(0, 10);
 
         return recordRepository.findByOrderByScoreDescRecordedAtAsc(pageable);
     }
 
+    @CacheEvict(cacheNames = "leaderboardCache", key = "'group_' + #dto.groupId", condition = "#dto.groupId != null")
     public LeaderboardRecord joinGroup(GroupPostDto dto) {
         Optional<LeaderboardRecord> recordOptional = recordRepository.findById(dto.getId());
         if (recordOptional.isEmpty()) {
@@ -54,6 +58,7 @@ public class LeaderboardService {
         return recordRepository.save(record);
     }
 
+    @Cacheable(cacheNames = "leaderboardCache", key = "'group_' + #groupId")
     public List<LeaderboardRecord> findAllByGroupId(String groupId) {
         return recordRepository.findAllByGroupId(groupId);
     }

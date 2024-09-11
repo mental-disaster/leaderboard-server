@@ -35,17 +35,19 @@ public class RecordControllerTests {
     @Test
     public void testSave_success() throws Exception {
         List<RecordPostDto> testList = List.of(
-                RecordPostDto.builder().id(null).name("no id user").score(BigInteger.valueOf(1000)).build(),
+                RecordPostDto.builder().id(null).name("no id user").score(BigInteger.valueOf(1000)).groupId("test group").build(),
                 RecordPostDto.builder().id("b9c7fc7e-f2c2-4e39-85f1-123456789abc").name("has id user").score(BigInteger.ONE).build()
         );
 
-        when(recordService.saveLeaderboard(any(RecordPostDto.class))).thenAnswer(invocationOnMock -> {
-            RecordPostDto dto = invocationOnMock.getArgument(0);
-            return new LeaderboardRecord()
-                    .setId("id")
-                    .setName(dto.getName())
-                    .setScore(dto.getScore());
-        });
+        when(recordService.saveRecord(any(RecordPostDto.class)))
+                .thenAnswer(invocationOnMock -> {
+                    RecordPostDto dto = invocationOnMock.getArgument(0);
+                    return new LeaderboardRecord()
+                            .setId("id")
+                            .setName(dto.getName())
+                            .setScore(dto.getScore())
+                            .setGroupId(dto.getGroupId());
+                });
 
         for (RecordPostDto bodyParam : testList) {
             String bodyJson = objectMapper.writeValueAsString(bodyParam);
@@ -56,7 +58,8 @@ public class RecordControllerTests {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").isNotEmpty())
                     .andExpect(jsonPath("$.name").value(bodyParam.getName()))
-                    .andExpect(jsonPath("$.score").value(bodyParam.getScore()));
+                    .andExpect(jsonPath("$.score").value(bodyParam.getScore()))
+                    .andExpect(jsonPath("$.groupId").value(bodyParam.getGroupId()));
         }
     }
 
@@ -74,9 +77,10 @@ public class RecordControllerTests {
 
     @Test
     public void testFindById_success() throws Exception {
-        when(recordService.findById("1")).thenReturn(
-                new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.ONE)
-        );
+        when(recordService.findById("1"))
+                .thenReturn(
+                        new LeaderboardRecord().setId("1").setName("user1").setScore(BigInteger.ONE)
+                );
 
         mockMvc.perform(get("/records/{id}", "1"))
                 .andExpect(status().isOk())

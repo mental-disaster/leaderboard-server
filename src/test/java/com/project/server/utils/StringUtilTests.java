@@ -3,7 +3,7 @@ package com.project.server.utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StringUtilTest {
+public class StringUtilTests {
 
     @Test
     void testGenerateRandomAlphanumeric_success() {

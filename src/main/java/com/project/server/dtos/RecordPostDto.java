@@ -17,4 +17,5 @@ public class RecordPostDto {
     private String name;
     @NotNull()
     private BigInteger score;
+    private String groupId;
 }
