@@ -36,10 +36,10 @@ public class RecordServiceTests {
         String existId = "b9c7fc7e-f2c2-4e39-85f1-123456789abc";
         BigInteger existScore = BigInteger.valueOf(1000);
         List<RecordPostDto> testList = List.of(
-                RecordPostDto.builder().id(null).name("new user").score(BigInteger.valueOf(1000)).groupId("group").build(),
-                RecordPostDto.builder().id("").name("new user2").score(BigInteger.valueOf(100)).build(),
-                RecordPostDto.builder().id(existId).name("high score").score(BigInteger.valueOf(1500)).groupId("groupExist").build(),
-                RecordPostDto.builder().id(existId).name("low score").score(BigInteger.valueOf(500)).build()
+                new RecordPostDto(null, "new user", BigInteger.valueOf(1000), "group"),
+                new RecordPostDto("", "new user2", BigInteger.valueOf(100), null),
+                new RecordPostDto(existId, "high score", BigInteger.valueOf(1500), "groupExist"),
+                new RecordPostDto(existId, "low score", BigInteger.valueOf(500), null)
         );
 
         when(recordRepository.findById(anyString()))
@@ -63,39 +63,31 @@ public class RecordServiceTests {
         for (RecordPostDto leaderboard : testList) {
             LeaderboardRecord result = recordService.saveRecord(leaderboard);
 
-            if (leaderboard.getId() == null || leaderboard.getId().isEmpty()) {
+            if (leaderboard.id() == null || leaderboard.id().isEmpty()) {
                 // id가 없는 경우(새로운 기록) id 생성
                 Assertions.assertNotNull(result.getId());
-                Assertions.assertEquals(leaderboard.getScore(), result.getScore());
+                Assertions.assertEquals(leaderboard.score(), result.getScore());
             } else {
                 // 기록갱신의 경우
-                Assertions.assertEquals(result.getId(), leaderboard.getId());
-                if (leaderboard.getScore().compareTo(existScore) > 0) {
+                Assertions.assertEquals(result.getId(), leaderboard.id());
+                if (leaderboard.score().compareTo(existScore) > 0) {
                     // 점수 갱신 O
-                    Assertions.assertEquals(leaderboard.getScore(), result.getScore());
+                    Assertions.assertEquals(leaderboard.score(), result.getScore());
                 } else {
                     // 점수 갱신 X
                     Assertions.assertEquals(existScore, result.getScore());
                 }
             }
-            Assertions.assertEquals(result.getName(), leaderboard.getName());
-            Assertions.assertEquals(result.getGroupId(), leaderboard.getGroupId());
+            Assertions.assertEquals(result.getName(), leaderboard.name());
+            Assertions.assertEquals(result.getGroupId(), leaderboard.groupId());
         }
     }
 
     @Test
     void testSaveRecord_fail() {
         String notExistId = "f4b7f5c8-2b8e-4c2a-8b6c-7f5e7d7c1b3b";
-        RecordPostDto notExistIdUser = RecordPostDto.builder()
-                .id(notExistId)
-                .name("Unidentified id user")
-                .score(BigInteger.valueOf(1000))
-                .build();
-        RecordPostDto newUser = RecordPostDto.builder()
-                .id(null)
-                .name("new user")
-                .score(BigInteger.valueOf(1000))
-                .build();
+        RecordPostDto notExistIdUser = new RecordPostDto(notExistId, "Unidentified id user", BigInteger.valueOf(1000), null);
+        RecordPostDto newUser = new RecordPostDto(null, "new user", BigInteger.valueOf(1000), null);
 
         when(recordRepository.findById(anyString())).thenAnswer(
                 invocationOnMock -> {

@@ -56,8 +56,8 @@ public class LeaderboardServiceTests {
     @Test
     void testJoinGroup_success() {
         List<GroupPostDto> testList = List.of(
-                GroupPostDto.builder().id("1").build(),
-                GroupPostDto.builder().id("2").groupId("qwer123").build()
+                new GroupPostDto("1", null),
+                new GroupPostDto("2", "qwer123")
         );
 
         when(recordRepository.findById("1"))
@@ -95,9 +95,9 @@ public class LeaderboardServiceTests {
     @Test
     void testJoinGroup_fail() {
         List<GroupPostDto> testList = List.of(
-                GroupPostDto.builder().id("1").build(),
-                GroupPostDto.builder().id("2").groupId("qwer123").build(),
-                GroupPostDto.builder().id("3").build()
+                new GroupPostDto("1", null),
+                new GroupPostDto("2", "qwer123"),
+                new GroupPostDto("3", null)
         );
 
         when(recordRepository.findById(anyString()))

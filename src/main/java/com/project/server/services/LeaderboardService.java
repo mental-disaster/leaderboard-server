@@ -31,13 +31,13 @@ public class LeaderboardService {
 
     @CacheEvict(cacheNames = "leaderboardCache", key = "'group_' + #dto.groupId", condition = "#dto.groupId != null")
     public LeaderboardRecord joinGroup(GroupPostDto dto) {
-        Optional<LeaderboardRecord> recordOptional = recordRepository.findById(dto.getId());
+        Optional<LeaderboardRecord> recordOptional = recordRepository.findById(dto.id());
         if (recordOptional.isEmpty()) {
             throw new InvalidParameterException(ErrorEnum.INVALID_ID.getMessage());
         }
         LeaderboardRecord record = recordOptional.get();
 
-        String groupId = dto.getGroupId();
+        String groupId = dto.groupId();
         if (groupId == null) {
             int generateCount = 0;
             int generateLimit = 10;

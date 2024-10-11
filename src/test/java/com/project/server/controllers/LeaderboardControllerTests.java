@@ -59,7 +59,7 @@ public class LeaderboardControllerTests {
 
     @Test
     public void testJoinGroup() throws Exception {
-        GroupPostDto bodyParam = GroupPostDto.builder().id("1").groupId("qwer123").build();
+        GroupPostDto bodyParam = new GroupPostDto("1", "qwer123");
 
         when(leaderboardService.joinGroup(any(GroupPostDto.class)))
                 .thenReturn(

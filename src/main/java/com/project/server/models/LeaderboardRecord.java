@@ -23,11 +23,6 @@ public class LeaderboardRecord {
     private LocalDateTime recordedAt;
 
     public RecordGetDto toGetDto() {
-        return RecordGetDto.builder()
-                .name(this.name)
-                .score(this.score)
-                .groupId(this.groupId)
-                .recordedAt(this.recordedAt)
-                .build();
+        return new RecordGetDto(this.name, this.score, this.groupId, this.recordedAt);
     }
 }

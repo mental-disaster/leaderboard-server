@@ -35,8 +35,8 @@ public class RecordControllerTests {
     @Test
     public void testSave_success() throws Exception {
         List<RecordPostDto> testList = List.of(
-                RecordPostDto.builder().id(null).name("no id user").score(BigInteger.valueOf(1000)).groupId("test group").build(),
-                RecordPostDto.builder().id("b9c7fc7e-f2c2-4e39-85f1-123456789abc").name("has id user").score(BigInteger.ONE).build()
+                new RecordPostDto(null, "no id user", BigInteger.valueOf(1000), "test group"),
+                new RecordPostDto("b9c7fc7e-f2c2-4e39-85f1-123456789abc", "has id user", BigInteger.ONE, null)
         );
 
         when(recordService.saveRecord(any(RecordPostDto.class)))
@@ -44,9 +44,9 @@ public class RecordControllerTests {
                     RecordPostDto dto = invocationOnMock.getArgument(0);
                     return new LeaderboardRecord()
                             .setId("id")
-                            .setName(dto.getName())
-                            .setScore(dto.getScore())
-                            .setGroupId(dto.getGroupId());
+                            .setName(dto.name())
+                            .setScore(dto.score())
+                            .setGroupId(dto.groupId());
                 });
 
         for (RecordPostDto bodyParam : testList) {
@@ -57,16 +57,16 @@ public class RecordControllerTests {
                             .content(bodyJson))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").isNotEmpty())
-                    .andExpect(jsonPath("$.name").value(bodyParam.getName()))
-                    .andExpect(jsonPath("$.score").value(bodyParam.getScore()))
-                    .andExpect(jsonPath("$.groupId").value(bodyParam.getGroupId()));
+                    .andExpect(jsonPath("$.name").value(bodyParam.name()))
+                    .andExpect(jsonPath("$.score").value(bodyParam.score()))
+                    .andExpect(jsonPath("$.groupId").value(bodyParam.groupId()));
         }
     }
 
     @Test
     public void testSave_fail() throws Exception {
         String bodyJson = objectMapper.writeValueAsString(
-                RecordPostDto.builder().id("invalid param").name("has id user").score(BigInteger.ONE).build()
+                new RecordPostDto("invalid param", "has id user", BigInteger.ONE, null)
         );
 
         mockMvc.perform(post("/records")

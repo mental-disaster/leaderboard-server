@@ -29,21 +29,21 @@ public class RecordService {
     })
     public LeaderboardRecord saveRecord(RecordPostDto dto) throws InvalidParameterException {
         LeaderboardRecord newRecord = new LeaderboardRecord();
-        newRecord.setName(dto.getName());
+        newRecord.setName(dto.name());
 
         String id;
         BigInteger score;
         LocalDateTime recordedAt;
-        if (dto.getId() != null && !dto.getId().isBlank()) {
-            id = dto.getId();
+        if (dto.id() != null && !dto.id().isBlank()) {
+            id = dto.id();
             Optional<LeaderboardRecord> existRecord = recordRepository.findById(id);
 
             if (existRecord.isEmpty()) {
                 throw new InvalidParameterException(ErrorEnum.INVALID_ID.getMessage());
             }
 
-            if (dto.getScore().compareTo(existRecord.get().getScore()) > 0) {
-                score = dto.getScore();
+            if (dto.score().compareTo(existRecord.get().getScore()) > 0) {
+                score = dto.score();
                 recordedAt = LocalDateTime.now();
             } else {
                 score = existRecord.get().getScore();
@@ -63,12 +63,12 @@ public class RecordService {
                 }
             } while (recordRepository.findById(id).isPresent());
 
-            score = dto.getScore();
+            score = dto.score();
             recordedAt = LocalDateTime.now();
         }
         newRecord.setId(id);
         newRecord.setScore(score);
-        newRecord.setGroupId(dto.getGroupId());
+        newRecord.setGroupId(dto.groupId());
         newRecord.setRecordedAt(recordedAt);
 
         return recordRepository.save(newRecord);

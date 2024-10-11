@@ -24,11 +24,7 @@ public class GlobalExceptionHandler {
                 .append(error.getDefaultMessage())
                 .append("; "));
 
-        ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode(ErrorEnum.INVALID_PARAMETER.getCode())
-                .message(message.toString())
-                .timestamp(LocalDateTime.now())
-                .build();
+        ErrorResponseDto errRes = new ErrorResponseDto(ErrorEnum.INVALID_PARAMETER.getCode(), message.toString(), LocalDateTime.now());
 
         return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
     }
@@ -40,11 +36,7 @@ public class GlobalExceptionHandler {
             message = ErrorEnum.INVALID_PARAMETER.getMessage();
         }
 
-        ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode(ErrorEnum.INVALID_PARAMETER.getCode())
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
+        ErrorResponseDto errRes = new ErrorResponseDto(ErrorEnum.INVALID_PARAMETER.getCode(), message, LocalDateTime.now());
 
         return new ResponseEntity<>(errRes, HttpStatus.BAD_REQUEST);
     }
@@ -56,22 +48,14 @@ public class GlobalExceptionHandler {
             message = ErrorEnum.NOT_FOUND_DATA.getMessage();
         }
 
-        ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode(ErrorEnum.NOT_FOUND_DATA.getCode())
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
+        ErrorResponseDto errRes = new ErrorResponseDto(ErrorEnum.NOT_FOUND_DATA.getCode(), message, LocalDateTime.now());
 
         return new ResponseEntity<>(errRes, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleUnexpectedError(Exception e) {
-        ErrorResponseDto errRes = ErrorResponseDto.builder()
-                .errorCode(ErrorEnum.UNEXPECTED.getCode())
-                .message(ErrorEnum.UNEXPECTED.getMessage())
-                .timestamp(LocalDateTime.now())
-                .build();
+        ErrorResponseDto errRes = new ErrorResponseDto(ErrorEnum.UNEXPECTED.getCode(), ErrorEnum.UNEXPECTED.getMessage(), LocalDateTime.now());
 
         return new ResponseEntity<>(errRes, HttpStatus.INTERNAL_SERVER_ERROR);
     }
